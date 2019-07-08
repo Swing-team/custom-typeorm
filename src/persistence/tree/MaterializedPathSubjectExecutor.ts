@@ -80,7 +80,7 @@ export class MaterializedPathSubjectExecutor {
             .createQueryBuilder()
             .select(materializedPathColumn, "path")
             .from(subject.metadata.target, subject.metadata.targetName)
-            .where(subject.identifier!)
+            .where({id: subject.identifier!.id})
             .getRawOne()
             .then(result => result ? result["path"] : undefined);
 
@@ -89,7 +89,7 @@ export class MaterializedPathSubjectExecutor {
             .createQueryBuilder()
             .update(subject.metadata.target)
             .set({ [materializedPathColumn]: () => `REPLACE(${materializedPathColumn}, :oldPath, :newPath)` } as any)
-            .where(`${materializedPathColumn} LIKE CONCAT(:oldPath, '%')`)
+            .where(`${materializedPathColumn} LIKE '${oldPath}%'`)
             .setParameter("oldPath", oldPath)
             .setParameter("newPath", newPath)
             .execute();
